@@ -1,74 +1,127 @@
-const Product = require("../models/user.model");
+const User = require('../models/user.model');
 
-
-
-
-exports.getUsers = async (req, res) => {
-  const time = req.requestTime;
-  const products = await Product.findAll()
-  res.json({
-    requestTime: time,
-    message: " Hello from GET Users shop GS 🛵",
-    results: products.length,
-         status: 'success',
-         message: 'Products found',
-         products
-  });
+exports.findAllUsers = async (req, res) => {
+  try {
+    const users = await User.findAll({
+      where: {
+        status: 'available',
+      },
+    });
+    return res.status(200).json({
+      status: 'success',
+      users,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: 'fail',
+      message: 'Something went wrong 🔴',
+    });
+  }
 };
 
-exports.UpdateUsers = (req, res) => {
-  console.log(req.body);
-  const time = req.requestTime;
-  res.json({
-    requestTime: time,
-    message: " Hello from POST Users shop GS 🛵",
-    product: req.body,
-  });
+exports.update = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email } = req.body;
+    const user = await User.findOne({
+      where: {
+        id,
+        status: 'available',
+      },
+    });
+    if (!user) {
+      return res.status(404).json({
+        status: 'error',
+        message: `User with id: ${id} not found`,
+      });
+    }
+    await user.update({ name, email });
+    return res.status(200).json({
+      status: 'success',
+      message: 'user updated ',
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: 'fail',
+      message: 'Something went wrong 🔴',
+    });
+  }
 };
 
-exports.getUser = (req, res) => {
-  const id = req.params.id;
-  const time = req.requestTime;
-  res.json({
-    requestTime: time,
-    message: " Hello from GETONE Users shop GS 🛵",
-    id,
-  });
+exports.findUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findOne({
+      where: {
+        id,
+        status: 'available',
+      },
+    });
+    if (!user) {
+      return res.status(404).json({
+        status: 'error',
+        message: `User with id: ${id} not found`,
+      });
+    }
+
+    return res.status(200).json({
+      status: 'success',
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: 'fail',
+      message: 'Something went wrong 🔴',
+    });
+  }
 };
 
 exports.createUsers = async (req, res) => {
   try {
-    const { name, date, TypeRequired, quantity, price, isNew, description, } = req.body;
-  const id = req.params.id;
- const product = await Product.create({
-    name,
-    date,
-    TypeRequired,
-    quantity,
-    price,
-    isNew,
-    description
-  })
-    return res.status(201).json({
-        message: " Hello the user is created  GS 🛵",
-    product
-  });
+    const { name, email, password, role } = req.body;
+    const user = await User.create({ name, email, password, role });
+
+    return res.status(200).json({
+      status: 'success',
+      user,
+    });
   } catch (error) {
-    console.log(error)
-    res.status(500).json({
+    console.log(error);
+    return res.status(500).json({
       status: 'fail',
-      message: 'Wrong'
-    })
+      message: 'Something went wrong 🔴',
+    });
   }
-  
 };
 
-exports.deleteUsers = (req, res) => {
-  const id = req.params.id;
-  const time = req.requestTime;
-  res.json({
-    requestTime: time,
-    message: " Hello from DELETE Users shop GS 🛵",
-    id,
-  });
+exports.delete = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findOne({
+      where: {
+        id,
+        status: 'available',
+      },
+    });
+    if (!user) {
+      return res.status(404).json({
+        status: 'error',
+        message: `User with id: ${id} not found`,
+      });
+    }
+    await user.update({ status: 'disabled' });
+    return res.status(200).json({
+      status: 'success',
+      message: 'user delete',
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: 'fail',
+      message: 'Something went wrong 🔴',
+    });
+  }
 };

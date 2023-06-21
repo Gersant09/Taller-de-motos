@@ -1,15 +1,17 @@
-const app = require('./app')
-const {db} = require("./database/config")
+require('dotenv').config();
+const app = require('./app');
+const { db } = require('./database/config');
 
 db.authenticate()
-.then(()=>console.log("Data base authenticate"))
-.catch((err)=>console.log(err));
+  .then(() => console.log('Data base authenticated...🕵🏽‍♂️'))
+  .catch((err) => console.log(err));
 
 db.sync()
-.then(()=>console.log("Data base synced"))
-.catch((err)=>console.log(err))
+  .then(() => console.log('Data base synced ...🕵🏽‍♂️'))
+  .catch((err) => console.log(err));
 
+const PORT = process.env.PORT;
 
-app.listen(4000, () => {
-    console.log("servicio corriendo en el puerto 4000 👍");
-  });
+app.listen(PORT, () => {
+  console.log(`Service runing on port ${PORT}... 👍...`);
+});

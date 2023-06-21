@@ -1,47 +1,37 @@
-const {DataTypes} = require("sequelize")
-const {db}= require("./../database/config")
+const { DataTypes } = require('sequelize');
+const { db } = require('./../database/config');
 
-const Product = db.define('products', {
-    id:{
-primaryKey: true,
-autoIncrement: true,
-allowNull: false,
-type: DataTypes.INTEGER
-    },
-    name:{
-        type: DataTypes.STRING,
-        allowNull:false
-    },
-    date:{
-        type:DataTypes.DATE,
-        allowNull: false,
-    },
-    TypeRequired: {
-        type:DataTypes.STRING,
-        allowNull: false,
-    },
-    quantity:{
-        type: DataTypes.STRING,
-        allowNull:false
-    },
-    price:{
-        type:DataTypes.FLOAT,
-        allowNull:false
-    },
-    isNew:{
-        type:DataTypes.BOOLEAN,
-        allowNull:false,
-        defaultValue: true
-    },
-    description:{
-        type:DataTypes.TEXT,
-        allowNull:false
-    },
-    status:{
-        type:DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true
-    }
-})
+const User = db.define('users', {
+  id: {
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: false,
+    unique: true,
+    type: DataTypes.INTEGER,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  role: {
+    type: DataTypes.ENUM('client', 'employee'),
+    allowNull: false,
+    defaultValue: 'client',
+  },
+  status: {
+    type: DataTypes.ENUM('available', 'disable'),
+    allowNull: false,
+    defaultValue: 'available',
+  },
+});
 
-module.exports = Product;
+module.exports = User;
