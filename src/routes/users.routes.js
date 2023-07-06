@@ -23,7 +23,11 @@ router
   .use(userMiddleware.resumUser)
   .route('/:id')
   .get(usersController.findUser)
-  .patch(validationMiddleware.updateUserValidation, usersController.update)
-  .delete(usersController.delete);
+  .patch(
+    authMiddleware.protectAccountOwner,
+    validationMiddleware.updateUserValidation,
+    usersController.update
+  )
+  .delete(authMiddleware.protectAccountOwner, usersController.delete);
 
 module.exports = router;

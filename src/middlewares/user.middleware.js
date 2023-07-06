@@ -1,6 +1,8 @@
 const User = require('../models/user.model');
+const AppError = require('../utils/appError');
+const catchAsync = require('../utils/catchAsync');
 
-exports.resumUser = async (req, res, next) => {
+exports.resumUser = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const user = await User.findOne({
     where: {
@@ -9,16 +11,15 @@ exports.resumUser = async (req, res, next) => {
     },
   });
   if (!user) {
-    return res.status(404).json({
-      status: 'error',
-      message: `User with id: ${id} not found`,
-    });
+    return next(
+      new AppError(`Cant find ${req.originalUrl} on this server`, 404)
+    );
   }
   user.req = user;
   next();
-};
+});
 
-exports.existUserEmail = async (req, res, next) => {
+exports.existUserEmail = catchAsync(async (req, res, next) => {
   const { email } = req.body;
   const user = await User.findOne({
     where: {
@@ -27,11 +28,8 @@ exports.existUserEmail = async (req, res, next) => {
     },
   });
   if (!user) {
-    return res.status(404).json({
-      status: 'error',
-      message: `User with email: ${email} not found`,
-    });
+    return next(new AppError(`User with email: ${email} not found`, 404));
   }
   req.user = user;
   next();
-};
+});

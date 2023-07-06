@@ -1,99 +1,60 @@
 const User = require('../models/user.model');
+const catchAsync = require('../utils/catchAsync');
 const generateJWT = require('../utils/jwt');
 const bcrypt = require('bcryptjs');
 
-exports.findAllUsers = async (req, res) => {
-  try {
-    const users = await User.findAll({
-      where: {
-        status: 'available',
-      },
-    });
-    return res.status(200).json({
-      status: 'success',
-      users,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      status: 'fail',
-      message: 'Something went wrong 🔴',
-    });
-  }
-};
+exports.findAllUsers = catchAsync(async (req, res) => {
+  const users = await User.findAll({
+    where: {
+      status: 'available',
+    },
+  });
+  return res.status(200).json({
+    status: 'success',
+    users,
+  });
+});
 
-exports.findUser = async (req, res) => {
-  try {
-    const { user } = req;
-    return res.status(200).json({
-      status: 'success',
-      user,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      status: 'fail',
-      message: 'Something went wrong 🔴',
-    });
-  }
-};
+exports.findUser = catchAsync(async (req, res) => {
+  const { user } = req;
+  return res.status(200).json({
+    status: 'success',
+    user,
+  });
+});
 
-exports.createUsers = async (req, res) => {
-  try {
-    const { name, email, password, role } = req.body;
-    const user = await User.create({ name, email, password, role });
-    const token = generateJWT(user.id);
-    return res.status(200).json({
-      status: 'success',
-      token,
-      user,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      status: 'fail',
-      message: 'Something went wrong 🔴',
-    });
-  }
-};
+exports.createUsers = catchAsync(async (req, res) => {
+  const { name, email, password, role } = req.body;
+  const user = await User.create({ name, email, password, role });
+  const token = generateJWT(user.id);
+  return res.status(200).json({
+    status: 'success',
+    token,
+    user,
+  });
+});
 
-exports.update = async (req, res) => {
-  try {
-    const { user } = req;
-    const { name, email } = req.body;
+exports.update = catchAsync(async (req, res) => {
+  const { user } = req;
+  const { name, email } = req.body;
 
-    await user.update({ name, email });
-    return res.status(200).json({
-      status: 'success',
-      message: 'user updated ',
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      status: 'fail',
-      message: 'Something went wrong 🔴',
-    });
-  }
-};
+  await user.update({ name, email });
+  return res.status(200).json({
+    status: 'success',
+    message: 'user updated ',
+  });
+});
 
-exports.delete = async (req, res) => {
-  try {
-    const { user } = req;
-    await user.update({ status: 'disabled' });
-    return res.status(200).json({
-      status: 'success',
-      message: 'user delete',
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      status: 'fail',
-      message: 'Something went wrong 🔴',
-    });
-  }
-};
+exports.delete = catchAsync(async (req, res) => {
+  const { user } = req;
+  await user.update({ status: 'disabled' });
+  return res.status(200).json({
+    status: 'success',
+    message: 'user delete',
+  });
+});
 
-exports.login = async (req, res, next) => {
+exports.login = catchAsync(async (req, res, next) => {
   const { user } = req;
   const { password } = req.body;
 
@@ -109,4 +70,4 @@ exports.login = async (req, res, next) => {
     token,
     user,
   });
-};
+});
